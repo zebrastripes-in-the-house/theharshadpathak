@@ -3237,16 +3237,42 @@
     <script>
       // Prevent external scripts from changing the title
       (function() {
-        var originalTitle = document.title;
-        var titleObserver = new MutationObserver(function() {
-          if (document.title !== originalTitle) {
-            document.title = originalTitle;
+        var wantedTitle = "theharshadpathak";
+        if (document.title !== wantedTitle) { document.title = wantedTitle; }
+        try {
+          Object.defineProperty(document, 'title', {
+            get: function() { return wantedTitle; },
+            set: function(val) { console.log('Blocked title change to:', val); }
+          });
+        } catch (e) { }
+        new MutationObserver(function() {
+          if (document.title !== wantedTitle) {
+            var t = document.querySelector('title');
+            if (t) { t.textContent = wantedTitle; }
+            else { var n = document.createElement('title'); n.innerText = wantedTitle; document.head.appendChild(n); }
           }
-        });
-        var titleElement = document.querySelector('title');
-        if (titleElement) {
-          titleObserver.observe(titleElement, { childList: true, characterData: true, subtree: true });
+        }).observe(document.head, { subtree: true, childList: true, characterData: true });
+      })();
+
+      // Replace Template/Resume Link
+      (function() {
+        function fixLink() {
+          // Target the specific Akio template link
+          var badLink = "https://www.framer.com/marketplace/templates/akio/";
+          var anchors = document.querySelectorAll('a[href*="marketplace/templates/akio"]');
+          anchors.forEach(function(a) {
+            if (a.getAttribute('href') !== '#') {
+               console.log("Replacing link:", a.href);
+               a.setAttribute('href', 'https://drive.google.com/drive/folders/1s7fjeDWUdP43GaSgybAGVIQOHmQkdcZM');
+               // Optional: Update text if it says "Get Template" to "Resume"
+               // if (a.innerText.trim() === "Get Template") a.innerText = "Resume";
+            }
+          });
         }
+        
+        // Run immediately and observe
+        fixLink();
+        new MutationObserver(fixLink).observe(document.body, { subtree: true, childList: true, attributes: true });
       })();
     </script>
     <meta
@@ -6602,7 +6628,7 @@
             if (Math.random() > 0.01) return;
           } else {
             console.error(
-              "Caught a fatal error. Please report the following to the Framer team via https://www.framer.com/contact/:\n",
+              "Caught a fatal error.",
               error,
               componentStack
             );
