@@ -3234,6 +3234,21 @@
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content="Framer 8e1ebfe" />
     <title>theharshadpathak</title>
+    <script>
+      // Prevent external scripts from changing the title
+      (function() {
+        var originalTitle = document.title;
+        var titleObserver = new MutationObserver(function() {
+          if (document.title !== originalTitle) {
+            document.title = originalTitle;
+          }
+        });
+        var titleElement = document.querySelector('title');
+        if (titleElement) {
+          titleObserver.observe(titleElement, { childList: true, characterData: true, subtree: true });
+        }
+      })();
+    </script>
     <meta
       name="description"
       content="This is a playful, carefully crafted portfolio template for Framer, built using grid systems, custom code components, and stylish design elements. It offers a layout that works and feels good."
